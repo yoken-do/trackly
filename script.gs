@@ -31,7 +31,10 @@ const reactionList = spread.getSheetByName(REACTION);
 // или когда программа отправляет HTTP-запрос GET в веб-приложение.
 function doGet(e)
 {
- return HtmlService.createHtmlOutputFromFile('index').setTitle(TITLE).setFaviconUrl(FAVICON);
+  const html = HtmlService.createHtmlOutputFromFile('index');
+  html.setTitle(TITLE);
+  html.setFaviconUrl(FAVICON);
+  return html;
 }
 
 function getPlaceNameList()

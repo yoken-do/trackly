@@ -1,4 +1,4 @@
-<script src=""></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=61c1bc3f-2cf2-4516-b54d-ffdb43e02dca&lang=ru_RU"></script>
 
 <div id="title">
 
@@ -516,6 +516,7 @@ let placeGlobal = null;
 let [place_name, comment, acoords, place_type, cost, description] = Array(6).fill(null);
 let reaction = null;
 let photos = [];
+let relevance = 0;
 
 function init() {
   const map = new ymaps.Map("map", {
@@ -600,6 +601,7 @@ document.getElementById("to-comment").addEventListener("click", function(e){
     cost = Number(document.getElementById("cost").value);
     description = document.getElementById("desc").value.trim();
     place_type = document.getElementById("place_type").value;
+    relevance = 1;
     
     if(place_name && cost >= 0 && description)
       window.location.hash = "#comment";
@@ -637,6 +639,30 @@ document.getElementById("to-comment").addEventListener("click", function(e){
       return;
     }
   });
+
+  document.getElementById("to-send").addEventListener("click", function(e){
+    window.location.hash = "#send";
+  });
+
+  document.getElementById("submit").addEventListener("click", function(e){
+     // здесь обработчик
+
+    if (relevance)
+  {
+    // в лист place сохраняем place_name, acoords[0], acoords[1], description, id типа местности
+// в checking сохраняем id места отдыха, timestamp, cost, relevance
+// в comment id места отдыха, id реакции (если нет, то 4), comment и url фото (хотя не знаю, может не надо это нам. Все равно делаем папку с названием комментария)
+  }
+
+  else
+  {
+    // в лист place сохраняем place_name, acoords[0], acoords[1], description, id типа местности
+// в comment id места отдыха, id реакции (если нет, то 4), comment и url фото (хотя не знаю, может не надо это нам. Все равно делаем папку с названием комментария)
+  }
+
+  });
+
+
 </script>
 
 <script>
