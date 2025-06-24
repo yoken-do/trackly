@@ -3,7 +3,7 @@
 <div id="title">
 
   <main>
-    <h2>Untracked</h2>
+    <h2>Trackly</h2>
     <p>Проект для сбора сведений о местах отдыха дикого туризма на Байкале</p>
 
     <a class="link" href="#join">Присоединиться</a>
@@ -27,13 +27,13 @@
 <div id="setname" class="slide">
 
   <main>
-    <h2>Дайте название</h2>
-    <input id="place-name" placeholder="Запишите сюда" />
+    <h2>Этого места нет на карте. Назовите его</h2>
+    <input id="place-name" placeholder="Введите название сюда" />
 
     <textarea id="desc" placeholder="Введите описание"></textarea>
 
     <span>
-      <input id="cost" min="0" onkeydown="return event.key !== '-' && event.key !== '+' && event.key !== 'e'" placeholder="Стоимость" type="number" />
+      <input id="cost" min="0" onkeydown="return event.key !== '-' && event.key !== '+' && event.key !== 'e'" placeholder="Стоимость" type="number" value="0" />
       <select id="place_type" title="Тип местности">
         <option>Лес</option>
         <option>Горы</option>
@@ -44,8 +44,7 @@
       </select>
     </span>
 
-    <button id="to-comment" class="but">Создать</button>
-
+    <button id="to-comment" class="but">Ваши впечатления</button>
 
   </main>
 
@@ -68,7 +67,7 @@
 
     </div>
 
-    <button id="to-photos" class="but">Дальше</button>
+    <button id="to-photos" class="but">Теперь фотографии</button>
 </p>
 
 
@@ -110,7 +109,7 @@
   <main>
     <h2>Подробнее</h2>
     <div id="map_about"></div>
-    <p>Над проектом `Untracked` работают студенты по заказу крутого университета.</p>
+    <p>Над проектом `Trackly` работают студенты по заказу Института динамики систем и теории управления имени В.М. Матросова Со РАН.</p>
     <span>
       <a class="link" href="#actual">Актуальность данных</a>
     </span>
@@ -129,18 +128,16 @@
     <input list="title-values" id="mode-title" placeholder="Введите название места">
     <datalist id="title-values"></datalist>
 
-    <input id="mode-cost" min="0" onkeydown="return event.key !== '-' && event.key !== '+' && event.key !== 'e'" placeholder="Стоимость" type="number" />
+    <input id="mode-cost" min="0" onkeydown="return event.key !== '-' && event.key !== '+' && event.key !== 'e'" placeholder="Стоимость" type="number" value="0"/>
 
     <span>
-      <button id="submit" class="but">Отправить</button>
+      <button id="sub" class="but">Отправить</button>
       <a class="link" href="#title">Вернуться назад</a>
     </span>
 
   </main>
 
 </div>
-
-<!-- Стили -->
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
@@ -498,48 +495,6 @@ h2
 
 </style>
 
-
-<!-- скрипты -->
-
-
-<script>
-
-  const mode_title = document.getElementById('mode-title');
-  const datalist = document.getElementById('title-values');
- 
-document.addEventListener('DOMContentLoaded', function() {
-  
-  google.script.run
-    .withSuccessHandler(function(data) {
-      if (!Array.isArray(data)) {
-        console.error('Полученные данные не являются массивом');
-        return;
-      }
-
-      // Первоначальное заполнение datalist
-      updateDatalist(data, '');
-
-      // Обработчик ввода для фильтрации
-      mode_title.addEventListener('input', function() {
-        updateDatalist(data, this.value.toLowerCase());
-      });
-    })
-    .getPlaceNameList();
-
-  function updateDatalist(data, filterText) {
-    datalist.innerHTML = '';
-    data.filter(item => 
-      item && item.toLowerCase().includes(filterText)
-    ).forEach(item => {
-      const option = document.createElement('option');
-      option.value = item;
-      datalist.appendChild(option);
-    });
-  }
-});
-</script>
-
-
 <script>
 
     document.querySelector(".custom-upload input").addEventListener(
@@ -642,11 +597,11 @@ document.getElementById("to-join").addEventListener(
 
 document.getElementById("to-comment").addEventListener("click", function(e){
     place_name = document.getElementById("place-name").value.trim();
-    cost = document.getElementById("cost").value;
+    cost = Number(document.getElementById("cost").value);
     description = document.getElementById("desc").value.trim();
     place_type = document.getElementById("place_type").value;
     
-    if(place_name && cost && description)
+    if(place_name && cost >= 0 && description)
       window.location.hash = "#comment";
     else
     {
@@ -655,7 +610,7 @@ document.getElementById("to-comment").addEventListener("click", function(e){
         alert("Введите название места!");
         return;
       }
-      else if(!cost)
+      else if(cost < 0)
       {
         alert("Введите стоимость!");
         return;
@@ -665,7 +620,6 @@ document.getElementById("to-comment").addEventListener("click", function(e){
         alert("Введите описание места!");
         return;
       }
-
     }
   });
 
@@ -719,4 +673,103 @@ document.getElementById("to-comment").addEventListener("click", function(e){
     })
     .getPlaceList();
 }
+</script>
+
+<script>
+
+const mode_title = document.getElementById('mode-title');
+const datalist = document.getElementById('title-values');
+let placeData = [];
+
+google.script.run.withSuccessHandler(function(data)
+{placeData = data;}).getPlaceNameList();
+
+
+ 
+document.addEventListener('DOMContentLoaded', function() {
+  
+  if (!Array.isArray(placeData)) {
+    console.error('Полученные данные не являются массивом');
+    return;
+  }
+
+  // Первоначальное заполнение datalist
+  updateDatalist(placeData, '');
+
+  // Обработчик ввода для фильтрации
+  mode_title.addEventListener('input', function() {
+    updateDatalist(placeData, this.value.toLowerCase());
+  });
+
+
+  function updateDatalist(data, filterText) {
+    datalist.innerHTML = '';
+    data.filter(item => 
+      item && item.toLowerCase().includes(filterText)
+    ).forEach(item => {
+      const option = document.createElement('option');
+      option.value = item;
+      datalist.appendChild(option);
+    });
+  }
+});
+
+
+
+  document.getElementById("sub").addEventListener("click", function(e){
+    const name = document.getElementById("mode-title").value.trim();
+    const newCost = Number(document.getElementById("mode-cost").value);
+    const timestamp = new Date().getTime();
+
+    if (!placeData.includes(name) || !name || newCost < 0)
+    {
+      alert("Заполните все поля корректно!");
+      return;
+    }
+
+    google.script.run.withSuccessHandler(function(placeId) {
+      if (placeId) {
+        google.script.run.withSuccessHandler(function(result) {
+          console.log("Данные успешно добавлены", result);
+        }).addEntryChecking([placeId, timestamp, newCost, 0]);
+      }
+    }).withFailureHandler((error) => {
+        alert("Ошибка при сохранении: " + error.message);
+      }).getPlaceId(name);
+    alert("Спасибо за актуальную информацию!");
+    window.location.hash = "#title";
+  });
+</script>
+
+
+<script>
+
+  function applyTheme()
+  {
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    const root = document.documentElement;
+
+    if (isDark)
+    {
+      root.style.setProperty('--bgcolor', "#100f0f");
+      root.style.setProperty('--txt-color', "#f0f0f0");
+    }
+    else
+    {
+      {
+      root.style.setProperty('--bgcolor', "#f0f0f0");
+      root.style.setProperty('--txt-color', "#100f0f");
+    }
+    }
+
+  }
+
+  document.addEventListener('DOMContentLoaded', applyTheme);
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener(
+    'change', applyTheme
+  );
+
+
 </script>

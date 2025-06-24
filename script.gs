@@ -11,7 +11,7 @@ const CHECKING = "";
 const COMMENT = "";
 const REACTION = "";
 const TITLE = "Trackly";
-const FAVICON = "https://raw.githubusercontent.com/yoken-do/untracked/main/icon.png";
+const FAVICON = "https://raw.githubusercontent.com/yoken-do/trackly/main/icon.png";
 
 
 const PHOTOS_FOLDER_NAME = "название папки"
@@ -68,6 +68,11 @@ function getReactionId(reaction) {
 function addEntry(list)
 {
   placeList.appendRow(list);
+}
+
+function addEntryChecking(data)
+{
+  checkingList.appendRow(data);
 }
 
 // Функция для координат
