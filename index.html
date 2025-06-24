@@ -1,5 +1,9 @@
-<script src="https://api-maps.yandex.ru/2.1/?apikey=61c1bc3f-2cf2-4516-b54d-ffdb43e02dca&lang=ru_RU"></script>
 
+<!-- подключаем Yandex карты -->
+<script src=""></script>
+
+
+<!-- первый слайд - вступительный -->
 <div id="title">
 
   <main>
@@ -12,6 +16,8 @@
 
 </div>
 
+<!-- второй слайд - выбираем точку на карте -->
+ <!-- Обязательное поле -->
 <div id="join" class="slide">
 
   <main>
@@ -24,6 +30,8 @@
 
 </div>
 
+<!-- третий слайд - вводим название, описание, стоимость и тип местности. -->
+ <!-- Все поля обязательный -->
 <div id="setname" class="slide">
 
   <main>
@@ -50,6 +58,8 @@
 
 </div>
 
+<!-- Четвертый слайд - комментарий и реакция -->
+<!-- Комментарий обязателен, реакция - нет -->
 <div id="comment" class="slide">
 
   <main>
@@ -75,6 +85,8 @@
 
 </div>
 
+<!-- Пятый слайд - загрузка фотографий -->
+ <!-- не обязательное поле -->
 <div id="photos" class="slide">
 
   <main>
@@ -93,6 +105,8 @@
 
 </div>
 
+
+<!-- Шестой слайд - при нажатии на #submit отправляем форму -->
 <div id="send" class="slide">
 
   <main>
@@ -104,6 +118,7 @@
 
 </div>
 
+<!-- Седьмой слайд - визуализация результатов -->
 <div id="about">
 
   <main>
@@ -118,6 +133,7 @@
 
 </div>
 
+<!-- Восьмой слайд - форма для отправки изменненых данных -->
 <div id="actual" class="slide">
 
   <main>
@@ -139,20 +155,23 @@
 
 </div>
 
+<!-- Подключаем шрифт Jost -->
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
 </style>
 
+
+<!-- Стили -->
 <style>
 
-
-/* Общие стили */
+/* 2 главных цвета */
 :root
 {
   --txt-color: #f0f0f0;
   --bgcolor: #100f0f;
 }
-
+/* Применяем стили ко всему, кроме тегов ymaps и их дочерних элементов (Яндекс карт) */
 *:not(ymaps):not(ymaps *)
 {
   font-family: 'Jost';
@@ -160,6 +179,7 @@
   background-color: var(--bgcolor);
 }
 
+/* задаем цвет выделенного текста всем элементам */
 ::selection
 {
 color: var(--bgcolor);
@@ -167,6 +187,7 @@ background-color: var(--txt-color);
 }
 
 /* Стиль для презентационной формы */
+/* !important повышает приоритет наших стилей над стилями Google Apps Script */
 html {
 scroll-behavior:smooth !important;
 overflow-y:hidden !important;
@@ -189,7 +210,7 @@ body
   align-items: center;
 }
 
-/* стили слайдов, блоков */
+/* стили слайдов */
 .slide, #about, #title
 {
   min-height: 100% !important;
@@ -201,7 +222,7 @@ body
   align-items: center !important;
 }
 
-/* стиль внутреннего блока */
+/* стиль внутреннего блока в слайде */
 main
 {
   display: flex;
@@ -210,9 +231,7 @@ main
   align-items: center;
 }
 
-
-
-/* Стили для полей */
+/* Стили для полей формы */
 
 /* название места, описание и отзыв */
 #place-name, #desc, #text-comment, #mode-title
@@ -257,6 +276,7 @@ main
   border: 2px solid var(--txt-color);
 }
 
+/* убираем spin-button */
 #cost::-webkit-inner-spin-button, #mode-cost::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
@@ -266,11 +286,11 @@ main
   -moz-appearance: textfield;
 }
 
-/* карты */
+/* блоки, к которым мы подгружаем карту */
 #map,  #map_about
 {
-    width: 640px;
-    height: 480px;
+  width: 640px;
+  height: 480px;
 }
 
 /* загрузка изображений */
@@ -347,7 +367,7 @@ h2, p
   width: 100%;
 }
 
-p, a, .but
+p, a, .but, #desc, #place_type, #cost, #place-name, #text-comment, #mode-title, #mode-cost
 {
   font-size: 1em;
 }
@@ -362,74 +382,68 @@ h2
   margin-bottom: 15px;
 }
 
-#desc, #place_type, #cost, #place-name, #text-comment, #mode-title, #mode-cost
-{
-  font-size: 1em;
-}
-
 </style>
+
+<!-- стили для мобильных устройств (max-width: 1000px) -->
 
 <style>
 
 @media screen and (max-width: 1000px) {
-  /* Общие стили для мобильных */
+
+  /* стили слайдов и внутреннего блока */
+
   .slide, #about, #title {
     min-width: 100% !important;
     max-width: 100% !important;
     padding: 20px !important;
     box-sizing: border-box;
   }
-  
+
   main {
     padding: 10px;
   }
-  
+
   /* Уменьшаем карты */
   #map, #map_about {
     width: 90%;
     height: 1000px;
   }
-  
-  /* Улучшаем отображение полей ввода */
+
+  /* Поля ввода */
   #place-name, #desc, #text-comment, #mode-title {
     width: 90%;
     padding: 20px;
   }
-  
+
   #place-name:focus, #desc:focus, #text-comment:focus, #mode-title:focus
   {
-  border: 4px solid var(--txt-color);
+    border: 4px solid var(--txt-color);
   }
-  
-  #place-name, #mode-title {font-size:3em;}
-  #desc, #text-comment {font-size: 2.5em;}
-  
+
   #desc, #text-comment
   {
-	height: 400px  
+    height: 400px  
   }
-  
+
   /* Адаптируем кнопки */
   .link {
-  width: 600px;
-  height: 100px;
-  text-decoration: none;
-  display: flex;
-  margin-top: 30px;
-  justify-content: center;
-  align-items: center;
-  font-size: 3em;
-} 
+    width: 600px;
+    height: 100px;
+    text-decoration: none;
+    display: flex;
+    margin-top: 30px;
+    justify-content: center;
+    align-items: center;
+  } 
 
-.but
-{
-  width: 604px;
-  height: 104px;
-  margin-top: 40px;
-  padding: 0;
-  font-size: 3em;
-}
-  
+  .but
+  {
+    width: 604px;
+    height: 104px;
+    margin-top: 40px;
+    padding: 0;
+  }
+
   /* Оптимизируем блок с ценой и типом места */
   span {
     display: flex;
@@ -437,86 +451,89 @@ h2
     flex-direction: column;
     align-items: center;
   }
-  
-#cost, #mode-cost
-{
-  width: 90%;
-}
 
-#place_type
-{
-  width: 100%;
-}
+  #cost, #mode-cost
+  {
+    width: 90%;
+  }
+
+  #place_type
+  {
+    width: 100%;
+  }
 
   #cost, #place_type, #mode-cost {
     margin: 20px 0;
     padding: 10px;
     height: 150px;
-    font-size: 4em;
   }
-  
-  
+
+
   /* Улучшаем реакции */
   .reactions {
     width: 100%;
     display:flex;
     justify-content: center;
   }
-  
 
-  
   .react {
-    font-size: 6em;
     margin: 0 30px;
     padding: 16px;
   }
-  
+
   /* Загрузка фото */
   .custom-upload {
     width: 90%;
     height: 400px;
-    font-size: 4em;
   }
-  
-  /* Текст */
-  h2 {
-    font-size: 4em;
+
+  /* Текст располагаем по центру */
+  h2, p {
     text-align: center;
   }
-  
- 
-  p {
-    font-size: 2.5em;
-    text-align: center;
-  }
-  
+
+  /* Меняем настройки шрифта */
+  .react {font-size: 6em;}
+  .custom-upload, h2, #cost, #place_type, #mode-cost {font-size: 4em;}
   a {font-size: 1em;}
+  #place-name, #mode-title, .link, .but {font-size: 3em;}
+  #desc, #text-comment, p {font-size: 2.5em;}
+
 }
 
 </style>
 
-<script>
+<!-- Здесь уже начинается клиентская часть js и работа с серверной частью -->
 
-    document.querySelector(".custom-upload input").addEventListener(
-    "change", function(e)
-    {
-      const fileName = e.target.files.length ? `Upload ${e.target.files.length} files` : "Upload photo";
-      this.parentElement.querySelector('span').textContent = fileName;
-    }
-  );
+<!-- Отображаем количество загруженных файлов -->
+<script>
+  document.querySelector(".custom-upload input").addEventListener(
+  "change", function(e)
+  {
+    const fileName = e.target.files.length ? `Upload ${e.target.files.length} files` : "Upload photo";
+    this.parentElement.querySelector('span').textContent = fileName;
+  }
+);
+</script>
+
+<!-- объявляем переменные, с которыми работаем -->
+<script>
+  // обязательные поля
+  let [place_name, comment, acoords, place_type, cost, description] = Array(6).fill(null);
+  // необязательные
+  let reaction = null; // реакции
+  let photos = []; // массив, в который сохраняем фотографии
+  let relevance = 0; // relevance = 0, значит место уже существует
 
 </script>
 
+<!-- работа с картами на втором слайде #join -->
 <script>
 ymaps.ready(init);
 
 let coords = null;
 let targetCoords = null;
 let placeGlobal = null;
-let [place_name, comment, acoords, place_type, cost, description] = Array(6).fill(null);
-let reaction = null;
-let photos = [];
-let relevance = 0;
 
 function init() {
   const map = new ymaps.Map("map", {
@@ -562,18 +579,62 @@ function init() {
       map.geoObjects.remove(placeGlobal);
     }
     coords = e.get('coords');
-    placeGlobal = new ymaps.Placemark(coords, {
+    placeGlobal = new ymaps.Placemark(coords, 
+    {
       balloonContent: 'Where',
       hintContent: 'Where',
     }, {
-      preset: 'islands#redDotIcon',
-      draggable: false
-    });
+    preset: 'islands#redDotIcon',
+    draggable: false
+  });
     map.geoObjects.add(placeGlobal);
   });
 }
 
-document.getElementById("to-join").addEventListener(
+</script>
+
+<!-- работа с картами, где визуализация -->
+
+<script>
+  ymaps.ready(init);
+  function init() {
+  const map2 = new ymaps.Map("map_about", {
+    center: [53.405327, 107.673049],
+    zoom: 6,
+    controls: ["zoomControl"]
+  });
+
+  google.script.run
+    .withSuccessHandler(function(data) {
+      for (let place of data) {
+        data_coords = [place[1], place[2]];
+        const placemark = new ymaps.Placemark(data_coords, {
+          balloonContentHeader: place[0],
+          balloonContentBody: `<b>Описание:</b> ${place[3]}<br> <b>Стоимость:</b> ${place[4]} рублей`,
+          hintContent: place[0],
+        }, {
+          preset: 'islands#redDotIcon',
+          draggable: false
+        });
+        
+        placemark.events.add('click', function(e) {
+          if (placeGlobal) {
+            map2.geoObjects.remove(placeGlobal);
+          }
+          targetCoords = e.get('target').geometry.getCoordinates();
+          place_name = place[0];
+        });
+        map2.geoObjects.add(placemark);
+      }
+    })
+    .getPlaceList();
+}
+</script>
+
+<!-- обработчики нажатия на кнопки и валидация полей -->
+<script>
+
+  document.getElementById("to-join").addEventListener(
   "click", function(e)
   {
     if (coords != null && targetCoords == null)
@@ -662,45 +723,10 @@ document.getElementById("to-comment").addEventListener("click", function(e){
 
   });
 
-
 </script>
 
-<script>
-  ymaps.ready(init);
-  function init() {
-  const map2 = new ymaps.Map("map_about", {
-    center: [53.405327, 107.673049],
-    zoom: 6,
-    controls: ["zoomControl"]
-  });
 
-  google.script.run
-    .withSuccessHandler(function(data) {
-      for (let place of data) {
-        data_coords = [place[1], place[2]];
-        const placemark = new ymaps.Placemark(data_coords, {
-          balloonContentHeader: place[0],
-          balloonContentBody: `<b>Описание:</b> ${place[3]}<br> <b>Стоимость:</b> ${place[4]} рублей`,
-          hintContent: place[0],
-        }, {
-          preset: 'islands#redDotIcon',
-          draggable: false
-        });
-        
-        placemark.events.add('click', function(e) {
-          if (placeGlobal) {
-            map2.geoObjects.remove(placeGlobal);
-          }
-          targetCoords = e.get('target').geometry.getCoordinates();
-          place_name = place[0];
-        });
-        map2.geoObjects.add(placemark);
-      }
-    })
-    .getPlaceList();
-}
-</script>
-
+<!-- форма отправки модераторам информации -->
 <script>
 
 const mode_title = document.getElementById('mode-title');
@@ -767,7 +793,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 </script>
 
-
+<!-- темная/светлая тема. Зависит от настроек браузера -->
 <script>
 
   function applyTheme()
