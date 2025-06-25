@@ -10,13 +10,22 @@
 _Приложение создаём и развертываем на Google Script._
 
 ## Материалы
-- https://script.google.com/
 - https://www.youtube.com/watch?v=c1AQH4UOmiI
-- https://docs.maptiler.com/sdk-js/examples/geocoding-reverse-json/
+- https://ru.stackoverflow.com/
+- https://developers.google.com/apps-script/
+- https://developer.mozilla.org/ru/docs/Web
+
 
 ## Запуск
-1. Перекинуть файлы `script.gs`, `index.html`, `about.html` в директорию Google Drive.
-2. Создать таблицу в Google Sheets.
-3. Скопировать url таблицы и название листа
-4. Вставить их в соответствующие поля
-5. Перейти в `script.gs` и нажать 'Выполнить'
+1. Открыть Google Drive и создать директорию.
+2. Перейти в директорию и создать Google Apps Script и директорию для хранения фотографий.
+3. Внутри среды создать файл `index.html`.
+4. Скопировать и вставить содержимое файлов.
+5. В файле с расширением `.gs` настроить необходимые поля:
+| Параметр  | Значение |
+|---------|----------------|
+| **SHEET_URL** | url адрес на таблицу Google Sheets в режиме редактирования (вида https://docs.google.com/spreadsheets/d/ID//edit?gid=0#gid=0), где вместо ID - ваше значение      |
+| **PLACE_NAME**, **PLACE_TYPE**, **CHECKING**, **COMMENT**, **REACTION** | названия листов в вашей таблице |
+| **TITLE** | Заголовок вашего сайта (отображается в адресной строке) |
+| **FAVICON** | Иконка вашего сайта (обязательно в `.png` формате) |
+| **PHOTOS_FOLDER_NAME** | Название вашей папки, куда сохраняются фотографии (название должно быть уникальным) |
