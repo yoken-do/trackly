@@ -2,7 +2,6 @@
 <!-- подключаем Yandex карты -->
 <script src=""></script>
 
-
 <!-- первый слайд - вступительный -->
 <div id="title">
 
@@ -124,7 +123,7 @@
   <main>
     <h2>Подробнее</h2>
     <div id="map_about"></div>
-    <p>Над проектом `Trackly` работают студенты по заказу Института динамики систем и теории управления имени В.М. Матросова Со РАН.</p>
+    <p>Над проектом `Trackly` работают студенты по заказу Института динамики систем и теории управления имени В.М. Матросова СО РАН.</p>
     <span>
       <a class="link" href="#actual">Актуальность данных</a>
     </span>
@@ -139,7 +138,7 @@
   <main>
     <h2>Актуальность данных:</h2>
     
-    <p>Мы стараемся поддерживать актуальность собранных данных. Если вы нешали несоответсвие, то заполните форму ниже</p>
+    <p>Мы стараемся поддерживать актуальность собранных данных. Если вы нашли несоответствие, то заполните форму ниже</p>
 
     <input list="title-values" id="mode-title" placeholder="Введите название места">
     <datalist id="title-values"></datalist>
@@ -194,8 +193,8 @@ overflow-y:hidden !important;
 min-height: 100%;
 }
 
-/* Общие стили html, body, body > div  */
-html, body, body > div 
+/* Общие стили html, body */
+html, body
 {
   width: 100% !important;
   height: 100% !important;
@@ -824,5 +823,176 @@ document.addEventListener('DOMContentLoaded', function() {
     'change', applyTheme
   );
 
-
 </script>
+
+<!-- Форма отправки данных -->
+<script>
+  // Функция для чтения файла как base64 строки
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          const base64String = reader.result.split(',')[1];
+          resolve({
+            fileName: file.name,
+            mimeType: file.type,
+            base64Content: base64String
+          });
+        } else {
+          reject(new Error("FileReader result is null"));
+        }
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Обработчик нажатия на кнопку "Отправить"
+  const mainSubmitButton = document.getElementById('submit'); // Находим кнопку по ID
+
+  if (mainSubmitButton) { // Проверяем, найдена ли кнопка
+    mainSubmitButton.addEventListener('click', function() {
+      const submitButtonRef = this; // Сохраняем ссылку на кнопку
+      submitButtonRef.disabled = true;
+      submitButtonRef.textContent = 'Отправка...';
+
+      console.log("Текущее значение window.cost перед проверкой:", cost, "(Тип:", typeof cost + ")");
+
+      // Собираем данные из глобальных JavaScript переменных,
+      const formData = {
+        placeName: place_name,       // Используем window. для явного указания глобальной переменной
+        description: description,
+        cost: cost,
+        place_type: place_type,
+        acoords: acoords,           // Массив [lat, lon]
+        comment: comment,
+        reaction: reaction,         // Уже содержит id реакции или null
+        relevance: relevance        // 0 или 1
+      };
+
+      const filesDataArray = photos; // Используем глобальный массив photos
+
+      console.log("Окончательная отправка. formData:", JSON.stringify(formData));
+      console.log("Окончательная отправка. photos:", filesDataArray ? filesDataArray.length : 0);
+      // Вызываем функцию Google Apps Script
+      google.script.run
+        .withSuccessHandler(function(response) {
+          console.log("Успешный ответ от сервера (основная форма):", response);
+
+          // Очистка глобальных переменных
+          place_name = '';
+          comment = '';
+          acoords = '';
+          place_type = '';
+          cost = 0; 
+          description = '';
+          reaction = '';
+          photos = [];
+          relevance = 0;
+
+          // Очистка полей формы на странице
+  
+          const placeNameInput = document.getElementById('place-name');
+          if (placeNameInput) placeNameInput.value = '';
+          const textCommentInput = document.getElementById('text-comment');
+          if (textCommentInput) textCommentInput.value = '';
+          const costInput = document.getElementById('cost');
+          if (costInput) costInput.value = '0'; // или ''
+          const descInput = document.getElementById('desc');
+          if (descInput) descInput.value = '';
+          const placeTypeSelect = document.getElementById('place_type');
+          if (placeTypeSelect) placeTypeSelect.selectedIndex = 0;
+
+          const reactionRadios = document.querySelectorAll('input[name="reaction"]');
+          reactionRadios.forEach(radio => { radio.checked = false; });
+
+          const photoUploadInput = document.getElementById('photoUpload');
+          if (photoUploadInput) photoUploadInput.value = null;
+          const customUploadSpan = document.querySelector(".custom-upload span");
+          if (customUploadSpan) customUploadSpan.textContent = "Upload photo";
+
+          window.location.hash = '#title'; // Перенаправляем на главный экран
+          submitButtonRef.disabled = false;
+          submitButtonRef.textContent = 'Отправить';
+        })
+        .withFailureHandler(function(error) {
+          alert('Ошибка при отправке: ' + error.message);
+          console.error('Ошибка GS (основная форма):', error);
+          submitButtonRef.disabled = false;
+          submitButtonRef.textContent = 'Отправить';
+        })
+        .processFormData(formData, filesDataArray); // Передаем formData и массив фото
+    });
+  } else {
+    console.error("Кнопка с id='submit' для основной формы не найдена!");
+  }
+
+  const toSendButton = document.getElementById("to-send");
+  if (toSendButton) {
+      toSendButton.addEventListener("click", function(e){
+        const photoUploadInput = document.getElementById('photoUpload');
+        const files = photoUploadInput.files;
+        const fileDataPromises = [];
+        photos = []; // Очищаем массив перед новым заполнением
+
+        if (files.length > 0) {
+          if (files.length > 10) {
+            alert('Можно загрузить не более 10 фотографий.');
+            return; // Не переходим дальше
+          }
+          for (let i = 0; i < files.length; i++) {
+            fileDataPromises.push(readFileAsBase64(files[i]));
+          }
+
+          Promise.all(fileDataPromises)
+            .then(filesDataArray => {
+              photos = filesDataArray; // Сохраняем обработанные файлы в глобальный массив
+              console.log("Фотографии подготовлены и сохранены в photos:", photos.length);
+              window.location.hash = "#send"; // Переходим на следующий слайд только после обработки фото
+            })
+            .catch(error => {
+              alert('Ошибка при обработке файлов: ' + error.message);
+              console.error('Ошибка чтения файлов:', error);
+            });
+        } else {
+          console.log("Фотографии не выбраны, переходим на #send.");
+          window.location.hash = "#send"; // Если фото не выбраны, просто переходим дальше
+        }
+      });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
